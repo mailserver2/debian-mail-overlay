@@ -5,13 +5,13 @@ ARG BUILD_CORES
 
 ARG SKALIBS_VER=2.9.2.1
 ARG EXECLINE_VER=2.6.1.0
-ARG S6_VER=2.9.1.0
+ARG S6_VER=2.9.2.0
 ARG RSPAMD_VER=2.5
 ARG GUCCI_VER=1.2.2
 
 ARG SKALIBS_SHA256_HASH="250b99b53dd413172db944b31c1b930aa145ac79fe6c5d7e6869ef804228c539"
 ARG EXECLINE_SHA256_HASH="a24c76f097ff44fe50b63b89bcde5d6ba9a481aecddbe88ee01b0e5a7b314556"
-ARG S6_SHA256_HASH="05e259532c6db8cb23f5f79938669cee30152008ac9e792ff4acb26db9a01ff7"
+ARG S6_SHA256_HASH="363db72af8fffba764b775c872b0749d052805b893b07888168f59a841e9dddd"
 ARG RSPAMD_SHA256_HASH="ef66073079cf02bda8f31e861ff3a34467a957d6c3958c118e142915ef960038"
 ARG GUCCI_SHA256_HASH="133074f1aff9c31ab02cbe159553e2db27ebee6d8a0a53a3467edf84321bc2af"
 
@@ -74,7 +74,7 @@ RUN NB_CORES=${BUILD_CORES-$(getconf _NPROCESSORS_CONF)} \
  && CHECKSUM=$(sha256sum ${EXECLINE_TARBALL} | awk '{print $1}') \
  && if [ "${CHECKSUM}" != "${EXECLINE_SHA256_HASH}" ]; then echo "${EXECLINE_TARBALL} : bad checksum" && exit 1; fi \
  && tar xzf ${EXECLINE_TARBALL} && cd execline-${EXECLINE_VER} \
- && ./configure --prefix=/usr \
+ && ./configure --prefix=/usr --libdir=/usr/local/lib/ \
  && make && make install \
  && cd /tmp \
  && S6_TARBALL="s6-${S6_VER}.tar.gz" \
