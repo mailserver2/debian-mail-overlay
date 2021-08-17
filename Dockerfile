@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:11.0-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG BUILD_CORES
