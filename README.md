@@ -7,7 +7,7 @@ Software built from source :
 * Skalibs 2.10.0.0 : <https://skarnet.org/software/skalibs/>
 * Execline 2.7.0.0 : <https://skarnet.org/software/execline/>
 * s6 2.10.0.0 : <https://skarnet.org/software/s6/>
-* Rspamd 2.7 : <https://rspamd.com/>
+* Rspamd 3.0 : <https://rspamd.com/>
 * Gucci 1.3.0 : <https://github.com/noqcks/gucci/>
 
 Please see the [main repository](https://github.com/mailserver2/mailserver) for instructions.
