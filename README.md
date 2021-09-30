@@ -10,4 +10,4 @@ Software built from source :
 * Rspamd 2.7 : <https://rspamd.com/>
 * Gucci 1.3.0 : <https://github.com/noqcks/gucci/>
 
-Please see the [main repository](https://github.com/hardware/mailserver) for instructions.
+Please see the [main repository](https://github.com/mailserver2/mailserver) for instructions.
