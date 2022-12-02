@@ -1,19 +1,19 @@
-FROM debian:11.2-slim
+FROM debian:11.5-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG BUILD_CORES
 
-ARG SKALIBS_VER=2.11.2.0
-ARG EXECLINE_VER=2.8.3.0
-ARG S6_VER=2.11.1.0
-ARG RSPAMD_VER=3.2
-ARG GUCCI_VER=1.5.4
+ARG SKALIBS_VER=2.12.0.1
+ARG EXECLINE_VER=2.9.0.1
+ARG S6_VER=2.11.1.2
+ARG RSPAMD_VER=3.4
+ARG GUCCI_VER=1.6.5
 
-ARG SKALIBS_SHA256_HASH="649cf3236fe3103f45366b6196b1bcd0457c9c17ca86f2b80007696a2baa7b77"
-ARG EXECLINE_SHA256_HASH="235dbecd594c82e0523c87c2eacf04c48781b39264158f57049f1a1ff8b4ad80"
-ARG S6_SHA256_HASH="ae64dc2ba208ff80e4ac4792ce90dd526b42bf19c966dc7d8eb9a6870e4bc23a"
-ARG RSPAMD_SHA256_HASH="5152d601a634ebeda1327056d4ef21cc012e30f88fce9b8c1ca55d532128a98b"
-ARG GUCCI_SHA256_HASH="beeec28afc3931ba435d209c76c4345e25f6b7a273fe69f7ead80709cf956232"
+ARG SKALIBS_SHA256_HASH="3e228f72f18d88c17f6c4e0a66881d6d3779427b7e7e889f3142b6f26da30285"
+ARG EXECLINE_SHA256_HASH="01260fcaf80ffbca2a94aa55ea474dfb9e39b3033b55c8af88126791879531f6"
+ARG S6_SHA256_HASH="6c1474be3e889dac392cee307abe015cd4be0c85c725c84ea7f184f0e34503a2"
+ARG RSPAMD_SHA256_HASH="f8d3e2b9a1a6ed6521c60fe505e97086624407f67366f0ce882eee433a53c355"
+ARG GUCCI_SHA256_HASH="647c842015ff3645f8ab46a12138eae388757644ec60b665fce048014d465e32"
 
 LABEL description="s6 + rspamd image based on Debian" \
       maintainer="Hardware <contact@meshup.net>" \
@@ -42,7 +42,8 @@ RUN NB_CORES=${BUILD_CORES-$(getconf _NPROCESSORS_CONF)} \
     libjemalloc-dev \
     libmagic-dev \
     libsodium-dev" \
- && apt-get update && apt-get install -y -q --no-install-recommends \
+ && apt-get update && apt-get dist-upgrade -y \
+ && apt-get install -y -q --no-install-recommends \
     ${BUILD_DEPS} \
     libevent-2.1-7 \
     libglib2.0-0 \
