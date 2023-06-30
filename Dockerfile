@@ -1,4 +1,4 @@
-FROM debian:11.7-slim
+FROM debian:12.0-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG BUILD_CORES
@@ -47,7 +47,7 @@ RUN NB_CORES=${BUILD_CORES-$(getconf _NPROCESSORS_CONF)} \
     ${BUILD_DEPS} \
     libevent-2.1-7 \
     libglib2.0-0 \
-    libssl1.1 \
+    libssl3 \
     libmagic1 \
     liblua5.1-0 \
     libluajit-5.1-2 \
@@ -60,7 +60,7 @@ RUN NB_CORES=${BUILD_CORES-$(getconf _NPROCESSORS_CONF)} \
     ca-certificates \
     gnupg \
     dirmngr \
-    netcat \
+    netcat-openbsd \
  && cd /tmp \
  && SKALIBS_TARBALL="skalibs-${SKALIBS_VER}.tar.gz" \
  && wget -q https://skarnet.org/software/skalibs/${SKALIBS_TARBALL} \
