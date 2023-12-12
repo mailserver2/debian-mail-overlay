@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 update_rspamd() {
   # Get latest rspamd version and calculate sha256 hash of the tarball
