@@ -14,7 +14,7 @@ update_rspamd() {
 
 update_gucci() {
   local GUCCI_VER=$(wget -q -O - 'https://api.github.com/repos/noqcks/gucci/releases/latest' | jq -r ".tag_name")
-  local GUCCI_SHA256_HASH=$(wget -q -O - "https://github.com/noqcks/gucci/releases/download/$GUCCI_VER/gucci-v$GUCCI_VER-linux-amd64" | sha256sum --zero | perl -lane 'print $F[0]')
+  local GUCCI_SHA256_HASH=$(wget -q -O - "https://github.com/noqcks/gucci/releases/download/$GUCCI_VER/gucci-$GUCCI_VER-linux-amd64" | sha256sum --zero | perl -lane 'print $F[0]')
 
   # Update Dockerfile
   perl -pi -e "s/GUCCI_VER=\K.*/$GUCCI_VER/" Dockerfile
