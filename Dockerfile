@@ -121,4 +121,4 @@ RUN NB_CORES=${BUILD_CORES-$(getconf _NPROCESSORS_CONF)} \
  && apt-get purge -y ${BUILD_DEPS} \
  && apt-get autoremove -y \
  && apt-get clean \
- && rm -rf /tmp/* /var/lib/apt/lists/* /var/cache/debconf/*-old
+ && rm -rf /tmp/* /var/lib/apt/lists/* /var/cache/debconf/*-old \
