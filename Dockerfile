@@ -1,19 +1,19 @@
-FROM debian:12.5-slim
+FROM debian:12.7-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG BUILD_CORES
 
-ARG SKALIBS_VER=2.14.1.1
-ARG EXECLINE_VER=2.9.5.1
-ARG S6_VER=2.12.0.4
-ARG RSPAMD_VER=3.8.4
-ARG GUCCI_VER=v1.6.11
+ARG SKALIBS_VER=2.14.2.0
+ARG EXECLINE_VER=2.9.6.0
+ARG S6_VER=2.13.0.0
+ARG RSPAMD_VER=3.10.0
+ARG GUCCI_VER=v1.6.13
 
-ARG SKALIBS_SHA256_HASH="b6b79b816f4ba0b6801676b0ed4179b59c8c7809eeffe26db672e404636befc3"
-ARG EXECLINE_SHA256_HASH="df750035d0fb21c7265bffb7ed7e1b661de1e842944a2252bdcddc32d0d97217"
-ARG S6_SHA256_HASH="c95d51787602e0c8c8e4f92a710cbdaa4ee797ee886e71342727e2974f95c06b"
-ARG RSPAMD_SHA256_HASH="ebea263f60a3d6036c153df0766b4aa03690e8caf59946d24ee54d8bb595c75d"
-ARG GUCCI_SHA256_HASH="63a818b38b6034e486dd1d50aed05685e7fe19e97c0f7dc9b372b57b98d1f2c1"
+ARG SKALIBS_SHA256_HASH="ddfec5730e5b2f19d0381ecf7f796b39a6e473236bda0ad8d3776a3fe7b07e43"
+ARG EXECLINE_SHA256_HASH="ba2a27e97c5eb6bd7ca6a0987a8925e44465a5be996daa0d18f8feca37d7571a"
+ARG S6_SHA256_HASH="7e46f8f55d80bb0e2025a64d5d649af4a4ac21e348020caaadde30ba5e5b4830"
+ARG RSPAMD_SHA256_HASH="528d7f8e2e6263378d043a41c4b1c5dbf1b3e54f3085619f68b04e283efa4a69"
+ARG GUCCI_SHA256_HASH="4695ed7b3ddb959e5116d85ab16558b4c6fed4e9ef2243c9da7807915b61d4ac"
 
 LABEL description="s6 + rspamd image based on Debian" \
       maintainer="Hardware <contact@meshup.net>" \
@@ -31,6 +31,7 @@ RUN NB_CORES=${BUILD_CORES-$(getconf _NPROCESSORS_CONF)} \
     ragel \
     wget \
     pkg-config \
+    libarchive-dev \
     liblua5.1-0-dev \
     libluajit-5.1-dev \
     libglib2.0-dev \
@@ -45,6 +46,7 @@ RUN NB_CORES=${BUILD_CORES-$(getconf _NPROCESSORS_CONF)} \
  && apt-get update && apt-get dist-upgrade -y \
  && apt-get install -y -q --no-install-recommends \
     ${BUILD_DEPS} \
+    libarchive13 \
     libevent-2.1-7 \
     libglib2.0-0 \
     libssl3 \
