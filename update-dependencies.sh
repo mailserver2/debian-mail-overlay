@@ -20,7 +20,7 @@ update_gucci() {
   perl -pi -e "s/GUCCI_VER=\K.*/$GUCCI_VER/" Dockerfile
   perl -pi -e "s/GUCCI_SHA256_HASH=\K.*/\"$GUCCI_SHA256_HASH\"/" Dockerfile
   # Update README
-  perl -pi -e "s/^\* Gucci \K(\d|\.)*/$GUCCI_VER/" README.md
+  perl -pi -e "s/^\* Gucci \Kv?(\d|\.)*/$GUCCI_VER/" README.md
 }
 
 update_skarnet_dependency() {
@@ -38,8 +38,21 @@ update_skarnet_dependency() {
   perl -pi -e "s/^\* $DEPENDENCY_NAME_README \K(\d|\.)*/$DEPENDENCY_VER/" README.md
 }
 
+update_traefik-certs-dumper() {
+  # Get latest rspamd version and calculate sha256 hash of the tarball
+  TCD_VER=$(wget -q -O - 'https://api.github.com/repos/ldez/traefik-certs-dumper/releases/latest' | jq -r ".tag_name")
+  TCD_SHA256_HASH=$(wget -q -O - "https://github.com/ldez/traefik-certs-dumper/releases/download/${TCD_VER}/traefik-certs-dumper_${TCD_VER}_linux_amd64.tar.gz" | sha256sum --zero | perl -lane 'print $F[0]')
+
+  # Update Dockerfile
+  perl -pi -e "s/TCD_VER=\K.*/$TCD_VER/" Dockerfile
+  perl -pi -e "s/TCD_SHA256_HASH=\K.*/\"$TCD_SHA256_HASH\"/" Dockerfile
+  # Update README
+  perl -pi -e "s/^\* traefik-certs-dumper \Kv?(\d|\.)*/$TCD_VER/" README.md
+}
+
 update_rspamd
 update_gucci
 update_skarnet_dependency Skalibs
 update_skarnet_dependency Execline
 update_skarnet_dependency s6
+update_traefik-certs-dumper

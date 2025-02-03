@@ -3,17 +3,19 @@ FROM debian:12.7-slim
 ARG DEBIAN_FRONTEND=noninteractive
 ARG BUILD_CORES
 
-ARG SKALIBS_VER=2.14.2.0
-ARG EXECLINE_VER=2.9.6.0
-ARG S6_VER=2.13.0.0
-ARG RSPAMD_VER=3.10.0
+ARG SKALIBS_VER=2.14.3.0
+ARG EXECLINE_VER=2.9.6.1
+ARG S6_VER=2.13.1.0
+ARG RSPAMD_VER=3.11.0
 ARG GUCCI_VER=v1.6.13
+ARG TCD_VER=v2.9.3
 
-ARG SKALIBS_SHA256_HASH="ddfec5730e5b2f19d0381ecf7f796b39a6e473236bda0ad8d3776a3fe7b07e43"
-ARG EXECLINE_SHA256_HASH="ba2a27e97c5eb6bd7ca6a0987a8925e44465a5be996daa0d18f8feca37d7571a"
-ARG S6_SHA256_HASH="7e46f8f55d80bb0e2025a64d5d649af4a4ac21e348020caaadde30ba5e5b4830"
-ARG RSPAMD_SHA256_HASH="528d7f8e2e6263378d043a41c4b1c5dbf1b3e54f3085619f68b04e283efa4a69"
+ARG SKALIBS_SHA256_HASH="a14aa558c9b09b062fa16acec623b2c8f93d69f5cba4d07f6d0c58913066c427"
+ARG EXECLINE_SHA256_HASH="76919d62f2de4db1ac4b3a59eeb3e0e09b62bcdd9add13ae3f2dad26f8f0e5ca"
+ARG S6_SHA256_HASH="bf0614cf52957cb0af04c7b02d10ebd6c5e023c9d46335cbf75484eed3e2ce7e"
+ARG RSPAMD_SHA256_HASH="6dbe6fc7df4079a64f59cd6e8e996400d02d946d808140a1f30060cea76088a6"
 ARG GUCCI_SHA256_HASH="4695ed7b3ddb959e5116d85ab16558b4c6fed4e9ef2243c9da7807915b61d4ac"
+ARG TCD_SHA256_HASH="6b4005febbf1bfdce4b5f306e18ec08587a4908acee395af7bbbc99ee877c148"
 
 LABEL description="s6 + rspamd image based on Debian" \
       maintainer="Hardware <contact@meshup.net>" \
@@ -120,6 +122,13 @@ RUN NB_CORES=${BUILD_CORES-$(getconf _NPROCESSORS_CONF)} \
  && if [ "${CHECKSUM}" != "${GUCCI_SHA256_HASH}" ]; then echo "${GUCCI_BINARY} : bad checksum" && exit 1; fi \
  && chmod +x ${GUCCI_BINARY} \
  && mv ${GUCCI_BINARY} /usr/local/bin/gucci \
+ && TCD_TARBALL="traefik-certs-dumper_${TCD_VER}_linux_amd64.tar.gz" \
+ && wget -q https://github.com/ldez/traefik-certs-dumper/releases/download/${TCD_VER}/${TCD_TARBALL} \
+ && CHECKSUM=$(sha256sum ${TCD_TARBALL} | awk '{print $1}') \
+ && if [ "${CHECKSUM}" != "${TCD_SHA256_HASH}" ]; then echo "${TCD_TARBALL} : bad checksum" && exit 1; fi \
+ && tar xzf ${TCD_TARBALL} \
+ && mv traefik-certs-dumper /usr/local/bin/traefik-certs-dumper \
+ && chmod +x /usr/local/bin/traefik-certs-dumper \
  && apt-get purge -y ${BUILD_DEPS} \
  && apt-get autoremove -y \
  && apt-get clean \
