@@ -7,7 +7,7 @@ Software built from source :
 * Skalibs 2.14.4.0 : <https://skarnet.org/software/skalibs/>
 * Execline 2.9.7.0 : <https://skarnet.org/software/execline/>
 * s6 2.13.2.0 : <https://skarnet.org/software/s6/>
-* Rspamd 3.11.1 : <https://rspamd.com/>
+* Rspamd 3.12.1 : <https://rspamd.com/>
 * Gucci v1.9.0 : <https://github.com/noqcks/gucci/>
 * traefik-certs-dumper v2.10.0 : <https://github.com/ldez/traefik-certs-dumper/>
 
