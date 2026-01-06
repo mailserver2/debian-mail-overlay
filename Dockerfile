@@ -1,19 +1,19 @@
-FROM debian:12.11-slim
+FROM debian:13-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG BUILD_CORES
 
-ARG SKALIBS_VER=2.14.4.0
-ARG EXECLINE_VER=2.9.7.0
-ARG S6_VER=2.13.2.0
-ARG RSPAMD_VER=3.12.1
+ARG SKALIBS_VER=2.14.5.0
+ARG EXECLINE_VER=2.9.8.0
+ARG S6_VER=2.14.0.0
+ARG RSPAMD_VER=3.14.2
 ARG GUCCI_VER=v1.9.0
 ARG TCD_VER=v2.10.0
 
-ARG SKALIBS_SHA256_HASH="0e626261848cc920738f92fd50a24c14b21e30306dfed97b8435369f4bae00a5"
-ARG EXECLINE_SHA256_HASH="73c9160efc994078d8ea5480f9161bfd1b3cf0b61f7faab704ab1898517d0207"
-ARG S6_SHA256_HASH="c5114b8042716bb70691406931acb0e2796d83b41cbfb5c8068dce7a02f99a45"
-ARG RSPAMD_SHA256_HASH="8739aa96db5ff6214595ba0a6f0d90ff46d9f11e5c5e164bbdd749b5cfbd65ed"
+ARG SKALIBS_SHA256_HASH="d8d9ec756b112ab6d4a9896ba0f53aca92559bc90aeaccd53ed8177e6e159764"
+ARG EXECLINE_SHA256_HASH="d05e0b75cc21841692119c7a7838163acd7f05318bd69e779068266daa7ce91f"
+ARG S6_SHA256_HASH="586bf8474d852655b89f1144c3d95461a1cee77f016dae6e75a3328b8a2f5df6"
+ARG RSPAMD_SHA256_HASH="b8402b639b2480b793795907d53609f375fd19b99501f777ff49f2e410edfb5b"
 ARG GUCCI_SHA256_HASH="5230c34e6cc39e95edd903b38a7466a1bbe0fb87955d572d4af7d9226077dd4c"
 ARG TCD_SHA256_HASH="b0c65a9bf5996e05bd0db9ead202476951b86f16c2e34e195c0b968f938613c1"
 
@@ -34,7 +34,7 @@ RUN NB_CORES=${BUILD_CORES-$(getconf _NPROCESSORS_CONF)} \
     wget \
     pkg-config \
     libarchive-dev \
-    liblua5.1-0-dev \
+    liblua5.4-dev \
     libluajit-5.1-dev \
     libglib2.0-dev \
     libevent-dev \
@@ -48,12 +48,12 @@ RUN NB_CORES=${BUILD_CORES-$(getconf _NPROCESSORS_CONF)} \
  && apt-get update && apt-get dist-upgrade -y \
  && apt-get install -y -q --no-install-recommends \
     ${BUILD_DEPS} \
-    libarchive13 \
-    libevent-2.1-7 \
+    libarchive13t64 \
+    libevent-2.1-7t64 \
     libglib2.0-0 \
-    libssl3 \
-    libmagic1 \
-    liblua5.1-0 \
+    libssl3t64 \
+    libmagic1t64 \
+    liblua5.4-0 \
     libluajit-5.1-2 \
     libsqlite3-0 \
     libhyperscan5 \
