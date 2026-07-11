@@ -97,6 +97,8 @@ RUN NB_CORES=${BUILD_CORES-$(getconf _NPROCESSORS_CONF)} \
  && tar xzf ${RSPAMD_TARBALL} && cd rspamd-${RSPAMD_VER} \
  && cmake \
     -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCONFDIR=/etc/rspamd \
+    -DRUNDIR=/run/rspamd \
     -DDBDIR=/var/mail/rspamd \
     -DNO_SHARED=ON \
     -DWANT_SYSTEMD_UNITS=OFF \
