@@ -1,4 +1,4 @@
-FROM debian:12.14-slim
+FROM debian:13.6-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG BUILD_CORES
@@ -48,15 +48,16 @@ RUN NB_CORES=${BUILD_CORES-$(getconf _NPROCESSORS_CONF)} \
  && apt-get update && apt-get dist-upgrade -y \
  && apt-get install -y -q --no-install-recommends \
     ${BUILD_DEPS} \
-    libarchive13 \
-    libevent-2.1-7 \
-    libglib2.0-0 \
-    libssl3 \
-    libmagic1 \
+    libarchive13t64 \
+    libevent-2.1-7t64 \
+    libglib2.0-0t64 \
+    libssl3t64 \
+    libmagic1t64 \
     liblua5.1-0 \
     libluajit-5.1-2 \
     libsqlite3-0 \
     libhyperscan5 \
+    libicu76 \
     libjemalloc2 \
     libsodium23 \
     sqlite3 \
