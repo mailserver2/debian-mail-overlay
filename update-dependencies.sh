@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 update_rspamd() {
   # Get latest rspamd version and calculate sha256 hash of the tarball
@@ -30,7 +30,7 @@ update_skarnet_dependency() {
   local DEPENDENCY_VER=$(wget -q -O - "https://api.github.com/repos/skarnet/$DEPENDENCY_NAME/tags" | jq -r ".[0].name")
   # Remove v from the start
   local DEPENDENCY_VER=${DEPENDENCY_VER#v}
-  local DEPENDENCY_SHA256_HASH=$(wget -q -O - "https://skarnet.org/software/$DEPENDENCY_NAME/$DEPENDENCY_NAME-$DEPENDENCY_VER.tar.gz" | sha256sum --zero | perl -lane 'print $F[0]')
+  local DEPENDENCY_SHA256_HASH=$(wget -q -O - "https://github.com/skarnet/$DEPENDENCY_NAME/archive/refs/tags/v$DEPENDENCY_VER.tar.gz" | sha256sum --zero | perl -lane 'print $F[0]')
   # Update Dockerfile
   perl -pi -e "s/${DEPENDENCY_NAME_README:u}_VER=\K.*/$DEPENDENCY_VER/" Dockerfile
   perl -pi -e "s/${DEPENDENCY_NAME_README:u}_SHA256_HASH=\K.*/\"$DEPENDENCY_SHA256_HASH\"/" Dockerfile

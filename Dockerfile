@@ -10,9 +10,9 @@ ARG RSPAMD_VER=4.1.0
 ARG GUCCI_VER=v1.9.0
 ARG TCD_VER=v2.11.2
 
-ARG SKALIBS_SHA256_HASH="7fde96e8afb4191593a15328883e9c7726c96891cf071222146821e8c87f8007"
-ARG EXECLINE_SHA256_HASH="be63533297a93c36fd267195117b4e668687a526f834517a8db47d85b6c7ec6a"
-ARG S6_SHA256_HASH="27dff73d626285540133e075e75887087f5117fd51de59503ef7d29e96f69e4c"
+ARG SKALIBS_SHA256_HASH="89fa886c829b13669c400f9e38154572ed86775afdbf3ce13b06fc697bb318c3"
+ARG EXECLINE_SHA256_HASH="972e645d8dbc7de88fa74102a25fa4e219ef760d1408e372d0214b2220a34522"
+ARG S6_SHA256_HASH="d088ace7f4190ceb755814a7936f4cfa73a6b9ff55912e8b65b21a562a6954e3"
 ARG RSPAMD_SHA256_HASH="1e92b976aff69fe0b74c02819a2a26b5821e55f185b9acdb5ddc1c08bcbfde19"
 ARG GUCCI_SHA256_HASH="5230c34e6cc39e95edd903b38a7466a1bbe0fb87955d572d4af7d9226077dd4c"
 ARG TCD_SHA256_HASH="de72c8cc16831ae44ef422b8a206899eddeafa2e17d17b64ee02faf76d9e1347"
@@ -66,27 +66,27 @@ RUN NB_CORES=${BUILD_CORES-$(getconf _NPROCESSORS_CONF)} \
     dirmngr \
     netcat-openbsd \
  && cd /tmp \
- && SKALIBS_TARBALL="skalibs-${SKALIBS_VER}.tar.gz" \
- && wget -q https://skarnet.org/software/skalibs/${SKALIBS_TARBALL} \
+ && SKALIBS_TARBALL="v${SKALIBS_VER}.tar.gz" \
+ && wget -q https://github.com/skarnet/skalibs/archive/refs/tags/${SKALIBS_TARBALL} \
  && CHECKSUM=$(sha256sum ${SKALIBS_TARBALL} | awk '{print $1}') \
  && if [ "${CHECKSUM}" != "${SKALIBS_SHA256_HASH}" ]; then echo "${SKALIBS_TARBALL} : bad checksum" && exit 1; fi \
- && tar xzf ${SKALIBS_TARBALL} && cd skalibs-${SKALIBS_VER} \
+ && tar xzf ${SKALIBS_TARBALL} && rm ${SKALIBS_TARBALL} && cd skalibs-${SKALIBS_VER} \
  && ./configure --prefix=/usr --datadir=/etc \
  && make && make install \
  && cd /tmp \
- && EXECLINE_TARBALL="execline-${EXECLINE_VER}.tar.gz" \
- && wget -q https://skarnet.org/software/execline/${EXECLINE_TARBALL} \
+ && EXECLINE_TARBALL="v${EXECLINE_VER}.tar.gz" \
+ && wget -q https://github.com/skarnet/execline/archive/refs/tags/${EXECLINE_TARBALL} \
  && CHECKSUM=$(sha256sum ${EXECLINE_TARBALL} | awk '{print $1}') \
  && if [ "${CHECKSUM}" != "${EXECLINE_SHA256_HASH}" ]; then echo "${EXECLINE_TARBALL} : bad checksum" && exit 1; fi \
- && tar xzf ${EXECLINE_TARBALL} && cd execline-${EXECLINE_VER} \
+ && tar xzf ${EXECLINE_TARBALL} && rm ${EXECLINE_TARBALL} && cd execline-${EXECLINE_VER} \
  && ./configure --prefix=/usr --libdir=/usr/local/lib/ \
  && make && make install \
  && cd /tmp \
- && S6_TARBALL="s6-${S6_VER}.tar.gz" \
- && wget -q https://skarnet.org/software/s6/${S6_TARBALL} \
+ && S6_TARBALL="v${S6_VER}.tar.gz" \
+ && wget -q https://github.com/skarnet/s6/archive/refs/tags/${S6_TARBALL} \
  && CHECKSUM=$(sha256sum ${S6_TARBALL} | awk '{print $1}') \
  && if [ "${CHECKSUM}" != "${S6_SHA256_HASH}" ]; then echo "${S6_TARBALL} : bad checksum" && exit 1; fi \
- && tar xzf ${S6_TARBALL} && cd s6-${S6_VER} \
+ && tar xzf ${S6_TARBALL} && rm ${S6_TARBALL} && cd s6-${S6_VER} \
  && ./configure --prefix=/usr --bindir=/usr/bin --sbindir=/usr/sbin \
  && make && make install \
  && cd /tmp \
