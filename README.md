@@ -7,8 +7,8 @@ Software built from source :
 * Skalibs 2.15.0.0 : <https://skarnet.org/software/skalibs/>
 * Execline 2.9.9.1 : <https://skarnet.org/software/execline/>
 * s6 2.15.0.0 : <https://skarnet.org/software/s6/>
-* Rspamd 4.1.0 : <https://rspamd.com/>
+* Rspamd 4.1.1 : <https://rspamd.com/>
 * Gucci v1.9.0 : <https://github.com/noqcks/gucci/>
-* traefik-certs-dumper v2.11.2 : <https://github.com/ldez/traefik-certs-dumper/>
+* traefik-certs-dumper v2.11.4 : <https://github.com/ldez/traefik-certs-dumper/>
 
 Please see the [main repository](https://github.com/mailserver2/mailserver) for instructions.
