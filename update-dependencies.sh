@@ -1,4 +1,5 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
+set -euo pipefail
 
 update_rspamd() {
   # Get latest rspamd version and calculate sha256 hash of the tarball
@@ -26,19 +27,20 @@ update_gucci() {
 update_skarnet_dependency() {
   local DEPENDENCY_NAME_README="$1"
   # convert all characters to lowercase
-  local DEPENDENCY_NAME="${DEPENDENCY_NAME_README:l}"
+  local DEPENDENCY_NAME="${DEPENDENCY_NAME_README,,}"
   local DEPENDENCY_VER=$(wget -q -O - "https://api.github.com/repos/skarnet/$DEPENDENCY_NAME/tags" | jq -r ".[0].name")
   # Remove v from the start
-  local DEPENDENCY_VER=${DEPENDENCY_VER#v}
+  DEPENDENCY_VER=${DEPENDENCY_VER#v}
   local DEPENDENCY_SHA256_HASH=$(wget -q -O - "https://github.com/skarnet/$DEPENDENCY_NAME/archive/refs/tags/v$DEPENDENCY_VER.tar.gz" | sha256sum --zero | perl -lane 'print $F[0]')
+  local DEPENDENCY_NAME_UPPER="${DEPENDENCY_NAME_README^^}"
   # Update Dockerfile
-  perl -pi -e "s/${DEPENDENCY_NAME_README:u}_VER=\K.*/$DEPENDENCY_VER/" Dockerfile
-  perl -pi -e "s/${DEPENDENCY_NAME_README:u}_SHA256_HASH=\K.*/\"$DEPENDENCY_SHA256_HASH\"/" Dockerfile
+  perl -pi -e "s/${DEPENDENCY_NAME_UPPER}_VER=\K.*/$DEPENDENCY_VER/" Dockerfile
+  perl -pi -e "s/${DEPENDENCY_NAME_UPPER}_SHA256_HASH=\K.*/\"$DEPENDENCY_SHA256_HASH\"/" Dockerfile
   # Update README
   perl -pi -e "s/^\* $DEPENDENCY_NAME_README \K(\d|\.)*/$DEPENDENCY_VER/" README.md
 }
 
-update_traefik-certs-dumper() {
+update_traefik_certs_dumper() {
   # Get latest rspamd version and calculate sha256 hash of the tarball
   TCD_VER=$(wget -q -O - 'https://api.github.com/repos/ldez/traefik-certs-dumper/releases/latest' | jq -r ".tag_name")
   TCD_SHA256_HASH=$(wget -q -O - "https://github.com/ldez/traefik-certs-dumper/releases/download/${TCD_VER}/traefik-certs-dumper_${TCD_VER}_linux_amd64.tar.gz" | sha256sum --zero | perl -lane 'print $F[0]')
@@ -55,4 +57,4 @@ update_gucci
 update_skarnet_dependency Skalibs
 update_skarnet_dependency Execline
 update_skarnet_dependency s6
-update_traefik-certs-dumper
+update_traefik_certs_dumper
