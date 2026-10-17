@@ -1,0 +1,70 @@
+# debian-mail-overlay/.github/workflows/release.yml
+#
+# Runs when a vX.Y.Z tag is pushed. Builds the image from the tagged commit,
+# runs the mailserver test suites against it (.github/actions/build-and-test),
+# and pushes that same image to Docker Hub as X.Y.Z, plus latest when X.Y.Z is
+# the highest release tag. One job on one runner, so what is pushed is exactly
+# what was tested; nothing is pushed if the tests fail.
+#
+# One-time repo setup: Settings > Environments > New environment "dockerhub"
+#   Deployment branches and tags: Selected, add a tag rule "v*"
+#   Secret    DOCKERHUB_TOKEN     Docker Hub access token, Read & Write
+#   Variable  DOCKERHUB_USERNAME  the Docker account the token belongs to
+#   Variable  DOCKERHUB_IMAGE     e.g. mailserver2/debian-mail-overlay
+# Only jobs that name the environment can read the token, and the tag rule
+# keeps it away from branch and PR runs.
+
+name: release
+
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: dockerhub
+    steps:
+      # fail now rather than after the test run
+      - name: Check the Docker Hub settings
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+          DOCKERHUB_IMAGE: ${{ vars.DOCKERHUB_IMAGE }}
+        run: |
+          : "${DOCKERHUB_TOKEN:?is not set on the dockerhub environment}"
+          : "${DOCKERHUB_USERNAME:?is not set on the dockerhub environment}"
+          : "${DOCKERHUB_IMAGE:?is not set on the dockerhub environment}"
+
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Build overlay and run the mailserver suites
+        uses: ./.github/actions/build-and-test
+
+      - name: Push the tested image
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+          DOCKERHUB_IMAGE: ${{ vars.DOCKERHUB_IMAGE }}
+        run: |
+          version=${GITHUB_REF_NAME#v}
+          # latest only moves forward: a fix tagged on an older line leaves it alone
+          highest=$(git ls-remote --tags --refs origin \
+            | sed 's|.*refs/tags/||' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1)
+
+          echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+          docker tag mailserver2/debian-mail-overlay:ci "$DOCKERHUB_IMAGE:$version"
+          docker push "$DOCKERHUB_IMAGE:$version"
+          echo "Pushed $DOCKERHUB_IMAGE:$version" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$GITHUB_REF_NAME" = "$highest" ]; then
+            docker tag mailserver2/debian-mail-overlay:ci "$DOCKERHUB_IMAGE:latest"
+            docker push "$DOCKERHUB_IMAGE:latest"
+            echo "Pushed $DOCKERHUB_IMAGE:latest" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "latest left alone: $highest is the highest release tag" >> "$GITHUB_STEP_SUMMARY"
+          fi

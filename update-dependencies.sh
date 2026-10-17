@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+update_debian() {
+  # Latest point release of the major already in the Dockerfile: 13.6 -> 13.7, never 13 -> 14
+  local DEBIAN_MAJOR=$(perl -ne 'print $1 if /^FROM debian:(\d+)\./' Dockerfile)
+  local DEBIAN_TAG=$(wget -q -O - "https://hub.docker.com/v2/repositories/library/debian/tags?page_size=100&name=$DEBIAN_MAJOR." | jq -r ".results[].name" | grep -E "^$DEBIAN_MAJOR\.[0-9]+-slim\$" | sort -V | tail -n 1)
+  if [[ -z "$DEBIAN_TAG" ]]; then
+    echo "No debian:$DEBIAN_MAJOR.x-slim tag found on Docker Hub" >&2
+    exit 1
+  fi
+
+  # Update Dockerfile
+  perl -pi -e "s/^FROM debian:\K.*/$DEBIAN_TAG/" Dockerfile
+}
+
 update_rspamd() {
   # Get latest rspamd version and calculate sha256 hash of the tarball
   RSPAMD_VER=$(wget -q -O - 'https://api.github.com/repos/rspamd/rspamd/releases/latest' | jq -r ".tag_name")
@@ -52,6 +65,7 @@ update_traefik_certs_dumper() {
   perl -pi -e "s/^\* traefik-certs-dumper \Kv?(\d|\.)*/$TCD_VER/" README.md
 }
 
+update_debian
 update_rspamd
 update_gucci
 update_skarnet_dependency Skalibs

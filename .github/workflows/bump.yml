@@ -1,0 +1,60 @@
+# debian-mail-overlay/.github/workflows/bump.yml
+#
+# Manual only: Actions tab > bump > Run workflow.
+# Runs update-dependencies.sh, commits the result to a new branch, and opens
+# a PR. Because the bot opened it, the PR's test run waits for a maintainer to
+# approve it on the PR. If no run is waiting, start one by hand: Actions tab >
+# test > Run workflow on the bot branch.
+#
+# One-time repo setting needed for the PR step:
+#   Settings > Actions > General > Workflow permissions >
+#   "Allow GitHub Actions to create and approve pull requests"
+
+name: bump
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Run update-dependencies.sh
+        run: ./update-dependencies.sh
+
+      - name: Commit to a new branch and open a draft PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE: ${{ github.ref_name }}
+        run: |
+          if git diff --quiet; then
+            echo "Everything is up to date, no PR opened." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # "RSPAMD 4.1.5 -> 4.2.1" style lines from the Dockerfile FROM and ARG changes
+          changes=$(git diff -U0 Dockerfile \
+            | perl -ne 'print "$1 $2 $3\n" if /^([-+])ARG (\w+)_VER=(\S+)/; print "$1 DEBIAN $2\n" if /^([-+])FROM debian:(\S+)/' \
+            | awk '{ if ($1=="-") old[$2]=$3; else new[$2]=$3 } END { for (k in new) print k, old[k], "->", new[k] }' \
+            | sort)
+          echo "$changes"
+
+          branch="bot/dependency-bump-${{ github.run_number }}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git commit -am "Bump dependencies" -m "$changes"
+          git push origin "$branch"
+
+          url=$(gh pr create --base "$BASE" --head "$branch" \
+            --title "Bump dependencies" \
+            --body "$(printf 'Opened by the bump workflow ([run](%s)).\n\n```\n%s\n```\n\nApprove the waiting **test** run to run the mailserver tests. If none is waiting: Actions > test > Run workflow on this branch.' \
+              "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" "$changes")")
+          echo "PR: $url" >> "$GITHUB_STEP_SUMMARY"

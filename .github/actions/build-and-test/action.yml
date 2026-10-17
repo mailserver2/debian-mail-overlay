@@ -1,0 +1,39 @@
+# debian-mail-overlay/.github/actions/build-and-test/action.yml
+#
+# Builds the overlay image from the checked-out commit as
+# mailserver2/debian-mail-overlay:ci, builds mailserver master on top of it,
+# and runs all nine mailserver test suites. Expects the overlay checked out in
+# the workspace root. Used by test.yml, and by release.yml, which pushes the
+# same :ci image once this passes.
+
+name: Build and test
+description: Build the overlay image and run the mailserver test suites against it
+
+runs:
+  using: composite
+  steps:
+    - name: Build overlay image
+      shell: bash
+      run: docker build -t mailserver2/debian-mail-overlay:ci .
+
+    - name: Check out mailserver master
+      uses: actions/checkout@v7
+      with:
+        repository: mailserver2/mailserver
+        path: mailserver
+        submodules: recursive
+
+    - name: Point mailserver at the candidate overlay
+      shell: bash
+      working-directory: mailserver
+      run: |
+        sed -i 's|^FROM mailserver2/debian-mail-overlay:.*|FROM mailserver2/debian-mail-overlay:ci|' Dockerfile
+        grep '^FROM' Dockerfile
+
+    # `make` = build-no-cache + all nine suites + clean. Without --pull,
+    # docker build uses the local :ci image instead of Docker Hub. clean only
+    # removes dangling images, so :ci is still there afterwards.
+    - name: Build mailserver and run all suites
+      shell: bash
+      working-directory: mailserver
+      run: make

@@ -1,0 +1,25 @@
+# debian-mail-overlay/.github/workflows/test.yml
+#
+# Builds the overlay image from the PR, builds mailserver master on top of
+# it, and runs all nine mailserver test suites (.github/actions/build-and-test).
+# Everything happens on one runner: no registry, no secrets, no changes to the
+# mailserver repo.
+
+name: test
+
+on:
+  pull_request:
+  workflow_dispatch: # "Run workflow" on the Actions tab tests any branch by hand
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out overlay
+        uses: actions/checkout@v7
+
+      - name: Build overlay and run the mailserver suites
+        uses: ./.github/actions/build-and-test
